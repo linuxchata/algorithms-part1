@@ -1,12 +1,12 @@
 ﻿namespace W1.UnionFind
 {
-    public class UnionFind
+    public class UnionFindQuickFind
     {
-        public int[] array;
+        private int[] array;
 
         private readonly int size;
 
-        public UnionFind(int size)
+        public UnionFindQuickFind(int size)
         {
             this.size = size;
             this.array = new int[this.size];

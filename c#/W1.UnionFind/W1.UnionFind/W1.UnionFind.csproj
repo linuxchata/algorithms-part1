@@ -7,8 +7,8 @@
     <ProjectGuid>{62EEF532-BF60-4434-98A4-07F82A55BB22}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>W1.QuickFind</RootNamespace>
-    <AssemblyName>W1.QuickFind</AssemblyName>
+    <RootNamespace>W1.UnionFind</RootNamespace>
+    <AssemblyName>W1.UnionFind</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -43,10 +43,14 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnionFind.cs" />
+    <Compile Include="UnionFindQuickFind.cs" />
+    <Compile Include="UnionFindQuickUnion.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="input.dat">
+    <None Include="input_quickunion.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="input_quickfind.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -8,10 +8,10 @@ namespace W1.UnionFind
     {
         public static void Main(string[] args)
         {
-            var input = File.ReadLines("input.dat").ToList();
+            var input = File.ReadLines("input_quickunion.dat").ToList();
             var size = int.Parse(input[0]);
 
-            var uf = new UnionFind(size);
+            var uf = new UnionFindQuickUnion(size);
 
             for (var i = 1; i < input.Count; i++)
             {
