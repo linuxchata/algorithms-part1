@@ -11,7 +11,7 @@ namespace W1.UnionFind
             var input = File.ReadLines("input_quickunion.dat").ToList();
             var size = int.Parse(input[0]);
 
-            var uf = new UnionFindQuickUnion(size);
+            var uf = new UnionFindWeightedQuickUnion(size);
 
             for (var i = 1; i < input.Count; i++)
             {
