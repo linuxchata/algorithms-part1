@@ -10,22 +10,23 @@
  *
  *----------------------------------------------------------------*/
 
-import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
 /**
  * Client program.
  */
-public class Permutation {
+public class PermutationDebug {
 
     /**
      * Client program entry point.
      */
     public static void main(String[] args) {
         int k = Integer.parseInt(args[0]);
+        In in = new In(args[1]);
 
-        String[] s = StdIn.readAllStrings();
+        String[] s = in.readAllStrings();
 
         String[] r = new String[k];
         for (int i = 0; i < k; i++) {
