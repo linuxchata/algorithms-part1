@@ -2,7 +2,7 @@
 /*----------------------------------------------------------------
  *  Author:        Pylyp Lebediev
  *  Written:       30/12/2016
- *  Last updated:  30/12/2016
+ *  Last updated:  01/01/2017
  *
  *  Compilation:   javac Deque.java
  *  Execution:     java Deque
@@ -14,7 +14,7 @@
 import java.util.Iterator;
 
 /**
- * A double-ended queue or deque
+ * A double-ended queue or deque.
  */
 public class Deque<Item> implements Iterable<Item> {
 
@@ -24,11 +24,11 @@ public class Deque<Item> implements Iterable<Item> {
   // Last node.
   private Node last;
 
-  // Size of the Deque
+  // Size of the Deque.
   private int n;
 
   /**
-   * Construct an empty deque
+   * Construct an empty deque.
    */
   public Deque() {
     this.first = null;
@@ -37,21 +37,21 @@ public class Deque<Item> implements Iterable<Item> {
   }
 
   /**
-   * Is the deque empty?
+   * Is the deque empty.
    */
   public boolean isEmpty() {
     return this.n == 0;
   }
 
   /**
-   * Return the number of items on the deque
+   * Return the number of items on the deque.
    */
   public int size() {
     return this.n;
   }
 
   /**
-   * Add the item to the front
+   * Add the item to the front.
    */
   public void addFirst(Item item) {
     if (item == null) {
@@ -79,7 +79,7 @@ public class Deque<Item> implements Iterable<Item> {
   }
 
   /**
-   * Add the item to the end
+   * Add the item to the end.
    */
   public void addLast(Item item) {
     if (item == null) {
@@ -101,7 +101,7 @@ public class Deque<Item> implements Iterable<Item> {
   }
 
   /**
-   * Remove and return the item from the front
+   * Remove and return the item from the front.
    */
   public Item removeFirst() {
     if (this.isEmpty()) {
@@ -110,16 +110,23 @@ public class Deque<Item> implements Iterable<Item> {
     }
 
     final Item item = this.first.item;
-    this.first = this.first.next;
-    this.first.previous = null;
 
-    this.n--;
+    // Handle case of collection with one item.
+    if (this.first.next != null) {
+      this.first = this.first.next;
+      this.first.previous = null;
+      this.n--;
+    } else {
+      this.first = null;
+      this.last = null;
+      this.n = 0;
+    }
 
     return item;
   }
 
   /**
-   * Remove and return the item from the end
+   * Remove and return the item from the end.
    */
   public Item removeLast() {
     if (this.isEmpty()) {
@@ -128,43 +135,98 @@ public class Deque<Item> implements Iterable<Item> {
     }
 
     final Item item = this.last.item;
-    this.last = this.last.previous;
-    this.last.next = null;
 
-    this.n--;
+    if (this.last.previous != null) {
+      this.last = this.last.previous;
+      this.last.next = null;
+      this.n--;
+    } else {
+      this.first = null;
+      this.last = null;
+      this.n = 0;
+    }
 
     return item;
   }
 
   /**
-   * Return an iterator over items in order from front to end
+   * Return an iterator over items in order from front to end.
    */
   public Iterator<Item> iterator() {
     return new DequeIterator();
   }
 
   /**
-   * Unit testing
+   * Unit testing.
    */
   public static void main(String[] args) {
     Deque<Integer> deque1 = new Deque<Integer>();
-    System.out.println(deque1.isEmpty());
     deque1.addFirst(4);
     deque1.addFirst(3);
     deque1.addFirst(2);
     deque1.addFirst(1);
     deque1.addLast(5);
-    System.out.println("Size " + deque1.size());
     deque1.removeFirst();
     deque1.removeLast();
-    System.out.println("Size " + deque1.size());
-    System.out.println(deque1.isEmpty());
     for (Integer item : deque1) {
       System.out.println(item);
     }
+
+    Deque<Double> deque2 = new Deque<Double>();
+    deque2.addFirst(0.0);
+    // deque2.isEmpty();
+    deque2.removeFirst();
+
+    Deque<Double> deque3 = new Deque<Double>();
+    deque3.addLast(0.0);
+    // deque3.isEmpty();
+    deque3.removeLast();
+
+    Deque<Double> deque4 = new Deque<Double>();
+    deque4.addFirst(0.0);
+    deque4.addFirst(1.0);
+    deque4.addFirst(2.0);
+    deque4.removeFirst();
+    deque4.removeFirst();
+    deque4.addFirst(5.0);
+    deque4.removeFirst();
+    deque4.removeFirst();
+
+    Deque<Double> deque5 = new Deque<Double>();
+    deque5.addFirst(0.0);
+    deque5.removeFirst();
+
+    Deque<Double> deque6 = new Deque<Double>();
+    // deque6.isEmpty();
+    deque6.addFirst(1.0);
+    deque6.removeFirst();
+
+    Deque<Double> deque7 = new Deque<Double>();
+    // deque7.isEmpty();
+    // deque7.isEmpty();
+    // deque7.isEmpty();
+    // deque7.isEmpty();
+    deque7.addFirst(4.0);
+    deque7.removeFirst();
+    deque7.addFirst(6.0);
+    deque7.removeFirst();
+    // deque7.isEmpty();
+
+    Deque<Double> deque8 = new Deque<Double>();
+    deque8.addFirst(0.0);
+    deque8.addFirst(1.0);
+    deque8.removeLast();
+    // deque8.isEmpty();
+    deque8.removeLast();
+    // deque8.isEmpty();
+
+    Deque<Double> deque9 = new Deque<Double>();
+    deque9.addFirst(0.0);
+    deque9.removeLast();
+    // deque9.isEmpty();
   }
 
-  // Helper linked list class
+  // Helper linked list class.
   private class Node {
 
     private Node previous;
@@ -178,7 +240,7 @@ public class Deque<Item> implements Iterable<Item> {
     }
   }
 
-  // An iterator, doesn't implement remove() since it's optional
+  // An iterator, doesn't implement remove() since it's optional.
   private class DequeIterator implements Iterator<Item> {
 
     private Node current = first;
