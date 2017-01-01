@@ -28,4 +28,4 @@ bld/
 .idea/tasks.xml
 
 # IntelliJ
-/out/
+out/
