@@ -115,7 +115,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     public static void main(String[] args) {
     }
 
-    private void resize(int newSize, boolean toShuffle) {
+    private void resize(int newSize) {
         Item[] oldA = this.a;
 
         this.a = (Item[]) new Object[newSize];
