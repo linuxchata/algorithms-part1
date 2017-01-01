@@ -61,7 +61,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     if (this.a.length == this.size) {
-      this.resize(this.size * 2, false);
+      this.resize(this.size * 2, true);
     }
 
     this.a[this.size++] = item;
@@ -84,8 +84,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     int quarterSize = (this.a.length / 4);
     if (this.n >= 2 && quarterSize >= this.n) {
-      this.resize(quarterSize, true);
-      this.size = quarterSize;
+      int halfSize = (this.a.length / 2);
+      this.resize(halfSize, false);
+      this.size = halfSize;
     }
 
     return item;
@@ -149,17 +150,14 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
   // An iterator, doesn't implement remove() since it's optional.
   private class RandomizedQueueIterator implements Iterator<Item> {
 
-    private Item[] itA;
-
-    private int current = 0;
+    private RandomizedQueue<Item> iteratorQueue;
 
     public RandomizedQueueIterator() {
-      this.itA = (Item[]) new Object[n];
+      iteratorQueue = new RandomizedQueue<Item>();
 
-      int j = 0;
       for (int i = 0; i < a.length; i++) {
         if (a[i] != null) {
-          this.itA[j++] = a[i];
+          iteratorQueue.enqueue(a[i]);
         }
       }
     }
@@ -169,7 +167,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     public boolean hasNext() {
-      return this.current < this.itA.length && this.itA[this.current] != null;
+      return this.iteratorQueue.size() > 0;
     }
 
     public Item next() {
@@ -177,7 +175,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         throw new java.util.NoSuchElementException("No nodes to iterate");
       }
 
-      return this.itA[this.current++];
+      return this.iteratorQueue.dequeue();
     }
   }
 }

@@ -89,7 +89,7 @@ public class RandomizedQueueTest {
     randomizedQueue.enqueue(3);
     randomizedQueue.dequeue();
     randomizedQueue.enqueue(3);
-    Assert.AreSame(2, randomizedQueue.size());    
+    Assert.AreSame(2, randomizedQueue.size());
 
     // Test 7
     randomizedQueue = new RandomizedQueue<Integer>();
@@ -108,5 +108,30 @@ public class RandomizedQueueTest {
     randomizedQueue.dequeue();
     randomizedQueue.dequeue();
     Assert.AreSame(2, randomizedQueue.size());
+
+    // Test 8
+    randomizedQueue = new RandomizedQueue<Integer>();
+    randomizedQueue.enqueue(0);
+    randomizedQueue.enqueue(1);
+    randomizedQueue.enqueue(2);
+    randomizedQueue.enqueue(3);
+    for (int item : randomizedQueue) {
+      System.out.println(item);
+    }
+    System.out.println("===========");
+    for (int item : randomizedQueue) {
+      System.out.println(item);
+    }
+
+    // Test 9
+    randomizedQueue = new RandomizedQueue<Integer>();
+    for (int i = 0; i < 128; i++) {
+      randomizedQueue.enqueue(0);
+    }
+    for (int i = 0; i < 95; i++) {
+      randomizedQueue.dequeue();
+    }
+    Assert.AreSame(33, randomizedQueue.size());
+    randomizedQueue.dequeue();
   }
 }
