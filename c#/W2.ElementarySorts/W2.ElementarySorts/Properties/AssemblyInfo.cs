@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("W2.Stacks")]
+[assembly: AssemblyTitle("W2.ElementarySorts")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("W2.Stacks")]
+[assembly: AssemblyProduct("W2.ElementarySorts")]
 [assembly: AssemblyCopyright("Copyright © LinuxChata 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("28d3b013-0b55-42ba-92eb-644fa3014155")]
+[assembly: Guid("38da3a07-66e2-4e19-8002-ae5858a571e8")]
 
 // Version information for an assembly consists of the following four values:
 //
