@@ -1,4 +1,8 @@
 /******************************************************************************
+ *  Author:        Pylyp Lebediev
+ *  Written:       08/01/2017
+ *  Last updated:  08/01/2017
+ *
  *  Compilation:  javac Point.java
  *  Execution:    java Point
  *  Dependencies: none
@@ -59,20 +63,23 @@ public class Point implements Comparable<Point> {
      * @return the slope between this point and the specified point
      */
     public double slopeTo(Point that) {
-        if (this.y == that.y) {
-            return +0.0;
-        }
-
-        if (this.x == that.x) {
-            return Double.POSITIVE_INFINITY;
+        if (that == null) {
+            throw new java.lang.NullPointerException("Point cannot be null");
         }
 
         if (this.x == that.x && this.y == that.y) {
             return Double.NEGATIVE_INFINITY;
         }
 
-        double m = (that.y - this.y) / (that.x - this.x);
+        if (this.x == that.x) {
+            return Double.POSITIVE_INFINITY;
+        }
 
+        if (this.y == that.y) {
+            return +0.0;
+        }
+
+        double m = (double) (that.y - this.y) / (double) (that.x - this.x);
         return m;
     }
 
@@ -89,6 +96,10 @@ public class Point implements Comparable<Point> {
      * argument point
      */
     public int compareTo(Point that) {
+        if (that == null) {
+            throw new java.lang.NullPointerException("Point cannot be null");
+        }
+
         if (this.y < that.y) {
             return -1;
         } else if (this.y > that.y) {
@@ -115,19 +126,21 @@ public class Point implements Comparable<Point> {
     }
 
     private class SlopeComparator implements Comparator<Point> {
-        public int compare(Point p, Point q) {
-            double pSlope = Point.this.slopeTo(p);
-            double qSlope = Point.this.slopeTo(q);
+        public int compare(Point q1, Point q2) {
+            if (q1 == null || q2 == null) {
+                throw new java.lang.NullPointerException("Point cannot be null");
+            }
 
-             if (pSlope > qSlope) {
-                 return 1;
-             }
-             else if (pSlope < qSlope) {
-                 return -1;
-             }
-             else {
-                 return 0;
-             }
+            double q1Slope = Point.this.slopeTo(q1);
+            double q2Slope = Point.this.slopeTo(q2);
+
+            if (q1Slope > q2Slope) {
+                return 1;
+            } else if (q1Slope < q2Slope) {
+                return -1;
+            } else {
+                return 0;
+            }
         }
     }
 
@@ -146,6 +159,5 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-        /* YOUR CODE HERE */
     }
 }

@@ -57,7 +57,6 @@ public class LineSegment {
      * @throws UnsupportedOperationException if called
      */
     public int hashCode() {
-
         throw new UnsupportedOperationException();
     }
 }

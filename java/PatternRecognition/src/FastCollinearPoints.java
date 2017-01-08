@@ -3,11 +3,11 @@
  *  Written:       08/01/2017
  *  Last updated:  08/01/2017
  *
- *  Compilation:  javac BruteCollinearPoints.java
- *  Execution:    java BruteCollinearPoints
+ *  Compilation:  javac FastCollinearPoints.java
+ *  Execution:    java FastCollinearPoints
  *  Dependencies: Point.java, LineSegment.java
  *
- *  Brute force algorithms
+ *  Fast algorithms
  *
  ******************************************************************************/
 
@@ -15,16 +15,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BruteCollinearPoints {
+public class FastCollinearPoints {
 
     private List<LineSegment> segments;
 
     /**
-     * Finds all line segments containing 4 points
+     * Finds all line segments containing 4 or more points
      *
      * @param points the other point
      */
-    public BruteCollinearPoints(Point[] points) {
+    public FastCollinearPoints(Point[] points) {
         if (points == null) {
             throw new java.lang.NullPointerException("Points must be populated");
         }
@@ -51,27 +51,7 @@ public class BruteCollinearPoints {
 
         this.segments = new ArrayList<LineSegment>();
 
-        for (int p = 0; p < pointsCopy.length; p++) {
-            for (int q = p + 1; q < pointsCopy.length; q++) {
-                if (q != p) {
-                    for (int r = q + 1; r < pointsCopy.length; r++) {
-                        if (r != p && r != q) {
-                            for (int s = r + 1; s < pointsCopy.length; s++) {
-                                if (s != p && s != q && s != r) {
-                                    double slopeQ = pointsCopy[p].slopeTo(pointsCopy[q]);
-                                    double slopeR = pointsCopy[p].slopeTo(pointsCopy[r]);
-                                    double slopeS = pointsCopy[p].slopeTo(pointsCopy[s]);
-                                    if (Double.compare(slopeQ, slopeR) == 0 && Double.compare(slopeR, slopeS) == 0) {
-                                        LineSegment line = new LineSegment(pointsCopy[p], pointsCopy[s]);
-                                        this.segments.add(line);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        
     }
 
     /**
