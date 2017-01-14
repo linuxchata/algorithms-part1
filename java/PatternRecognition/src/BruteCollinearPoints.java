@@ -1,7 +1,7 @@
 /******************************************************************************
  *  Author:        Pylyp Lebediev
  *  Written:       08/01/2017
- *  Last updated:  08/01/2017
+ *  Last updated:  14/01/2017
  *
  *  Compilation:  javac BruteCollinearPoints.java
  *  Execution:    java BruteCollinearPoints
@@ -25,29 +25,12 @@ public class BruteCollinearPoints {
      * @param points the other point
      */
     public BruteCollinearPoints(Point[] points) {
-        if (points == null) {
-            throw new java.lang.NullPointerException("Points must be populated");
-        }
+        this.ValidateInputArrayOfPoints(points);
 
-        for (int i = 0; i < points.length; i++) {
-            if (points[i] == null) {
-                throw new java.lang.NullPointerException("Point cannot be null");
-            }
-        }
+        // Copy array of point to another array to make sure that initial array won't be changed.
+        Point[] pointsCopy = Arrays.copyOf(points, points.length);
 
-        Point[] pointsCopy = new Point[points.length];
-        for (int i = 0; i < points.length; i++) {
-            pointsCopy[i] = points[i];
-        }
-
-        Arrays.sort(pointsCopy);
-        for (int i = 0; i < pointsCopy.length; i++) {
-            int nextElementIndex = i + 1;
-            if (nextElementIndex < pointsCopy.length &&
-                    pointsCopy[i].compareTo(pointsCopy[nextElementIndex]) == 0) {
-                throw new java.lang.IllegalArgumentException("Duplicates are not allowed");
-            }
-        }
+        this.ValidateForDuplicates(points);
 
         this.segments = new ArrayList<LineSegment>();
 
@@ -87,5 +70,29 @@ public class BruteCollinearPoints {
     public LineSegment[] segments() {
         LineSegment[] lines = new LineSegment[this.numberOfSegments()];
         return this.segments.toArray(lines);
+    }
+
+    private void ValidateInputArrayOfPoints(Point[] points) {
+        if (points == null) {
+            throw new java.lang.NullPointerException("Points must be populated");
+        }
+
+        for (int i = 0; i < points.length; i++) {
+            if (points[i] == null) {
+                throw new java.lang.NullPointerException("Point cannot be null");
+            }
+        }
+    }
+
+    private void ValidateForDuplicates(Point[] points) {
+        Arrays.sort(points);
+        for (int i = 0; i < points.length; i++) {
+            int nextElementIndex = i + 1;
+            if (nextElementIndex < points.length &&
+                    points[i].compareTo(points[nextElementIndex]) == 0) {
+                throw new java.lang.IllegalArgumentException("Duplicates are not allowed");
+            }
+        }
+
     }
 }
