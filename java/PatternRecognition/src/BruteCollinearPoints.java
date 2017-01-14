@@ -25,12 +25,12 @@ public class BruteCollinearPoints {
      * @param points the other point
      */
     public BruteCollinearPoints(Point[] points) {
-        this.ValidateInputArrayOfPoints(points);
+        this.validateInputArrayOfPoints(points);
 
         // Copy array of point to another array to make sure that initial array won't be changed.
         Point[] pointsCopy = Arrays.copyOf(points, points.length);
 
-        this.ValidateForDuplicates(points);
+        this.validateForDuplicates(pointsCopy);
 
         this.segments = new ArrayList<LineSegment>();
 
@@ -72,7 +72,7 @@ public class BruteCollinearPoints {
         return this.segments.toArray(lines);
     }
 
-    private void ValidateInputArrayOfPoints(Point[] points) {
+    private void validateInputArrayOfPoints(Point[] points) {
         if (points == null) {
             throw new java.lang.NullPointerException("Points must be populated");
         }
@@ -84,7 +84,7 @@ public class BruteCollinearPoints {
         }
     }
 
-    private void ValidateForDuplicates(Point[] points) {
+    private void validateForDuplicates(Point[] points) {
         Arrays.sort(points);
         for (int i = 0; i < points.length; i++) {
             int nextElementIndex = i + 1;

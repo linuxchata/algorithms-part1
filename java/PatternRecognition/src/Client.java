@@ -38,13 +38,15 @@ public class Client {
         StdDraw.show();
 
         // Print and draw the line segments
-        /**BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+        StdOut.println("Brute Collinear Points");
+        /** BruteCollinearPoints collinear = new BruteCollinearPoints(points);
         for (LineSegment segment : collinear.segments()) {
             StdOut.println(segment);
             segment.draw();
-        }*/
+        } */
 
         // Print and draw the line segments
+        StdOut.println("Fast Collinear Points");
         FastCollinearPoints collinear2 = new FastCollinearPoints(points);
         for (LineSegment segment : collinear2.segments()) {
             StdOut.println(segment);
