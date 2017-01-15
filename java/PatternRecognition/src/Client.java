@@ -3,11 +3,11 @@
  *  Written:       08/01/2017
  *  Last updated:  08/01/2017
  *
- *  Compilation:  javac Client .java
+ *  Compilation:  javac Client.java
  *  Execution:    java Client
  *  Dependencies: BruteCollinearPoints.java, FastCollinearPoints.java
  *
- *  Fast algorithms
+ *  Client
  *
  ******************************************************************************/
 
