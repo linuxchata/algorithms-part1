@@ -1,7 +1,7 @@
 /******************************************************************************
  *  Author:        Pylyp Lebediev
  *  Written:       15/01/2017
- *  Last updated:  15/01/2017
+ *  Last updated:  16/01/2017
  *
  *  Compilation:  javac Board.java
  *  Execution:    java Board
@@ -45,24 +45,55 @@ public class Board {
      * N umber of blocks out of place
      */
     public int hamming() {
-        int hammingValue = 0;
+        int hamming = 0;
         for (int i = 0; i < this.n; i++) {
             for (int j = 0; j < this.n; j++) {
                 int expectedBlock = 3 * i + j + 1;
                 if (this.blocks[i][j] != 0 && this.blocks[i][j] != expectedBlock) {
-                    hammingValue++;
+                    hamming++;
                 }
             }
         }
 
-        return hammingValue + this.moves;
+        return hamming + this.moves;
     }
 
     /**
      * Sum of Manhattan distances between blocks and goal
      */
     public int manhattan() {
-        return 0;
+        int manhattan = 0;
+
+        // Expected value
+        int e = 0;
+        for (int i = 0; i < this.n; i++) {
+            for (int j = 0; j < this.n; j++) {
+                // Expected value
+                e++;
+
+                // Current value
+                int value = this.blocks[i][j];
+                if (value != 0 && value != e) {
+                    // Calculate destination coordinates for current value that is not in place
+                    int c;
+                    int r;
+                    if (value % this.n == 0) {
+                        r = value / this.n;
+                        c = this.n;
+                    } else {
+                        r = (value / this.n) + 1;
+                        c = (value % this.n);
+                    }
+
+                    // Calculate distance to the destination coordinates
+                    int dc = (j + 1) - c;
+                    int dr = (i + 1) - r;
+                    manhattan = manhattan + Math.abs(dc) + Math.abs(dr);
+                }
+            }
+        }
+
+        return manhattan + this.moves;
     }
 
     /**
@@ -224,5 +255,47 @@ public class Board {
 
         Board solvedBoard = new Board(solvedBlocks);
         solvedBoard.isGoal();
+
+        int[][] manhattanBlocks = new int[3][];
+        manhattanBlocks[0] = new int[3];
+        manhattanBlocks[1] = new int[3];
+        manhattanBlocks[2] = new int[3];
+        manhattanBlocks[0][0] = 8;
+        manhattanBlocks[0][1] = 1;
+        manhattanBlocks[0][2] = 3;
+        manhattanBlocks[1][0] = 4;
+        manhattanBlocks[1][1] = 0;
+        manhattanBlocks[1][2] = 2;
+        manhattanBlocks[2][0] = 7;
+        manhattanBlocks[2][1] = 6;
+        manhattanBlocks[2][2] = 5;
+
+        Board manhattanBoard = new Board(manhattanBlocks);
+        manhattanBoard.manhattan();
+
+        int[][] manhattanBlocks2 = new int[4][];
+        manhattanBlocks2[0] = new int[4];
+        manhattanBlocks2[1] = new int[4];
+        manhattanBlocks2[2] = new int[4];
+        manhattanBlocks2[3] = new int[4];
+        manhattanBlocks2[0][0] = 0;
+        manhattanBlocks2[0][1] = 9;
+        manhattanBlocks2[0][2] = 1;
+        manhattanBlocks2[0][3] = 10;
+        manhattanBlocks2[1][0] = 3;
+        manhattanBlocks2[1][1] = 5;
+        manhattanBlocks2[1][2] = 4;
+        manhattanBlocks2[1][3] = 2;
+        manhattanBlocks2[2][0] = 14;
+        manhattanBlocks2[2][1] = 6;
+        manhattanBlocks2[2][2] = 11;
+        manhattanBlocks2[2][3] = 7;
+        manhattanBlocks2[3][0] = 12;
+        manhattanBlocks2[3][1] = 13;
+        manhattanBlocks2[3][2] = 8;
+        manhattanBlocks2[3][3] = 15;
+
+        Board manhattanBoard2 = new Board(manhattanBlocks2);
+        manhattanBoard2.manhattan();
     }
 }
