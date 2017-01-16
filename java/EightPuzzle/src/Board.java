@@ -69,7 +69,25 @@ public class Board {
      * Is this board the goal board?
      */
     public boolean isGoal() {
-        return false;
+        // Check that last block is not equal to zero
+        if (this.blocks[this.n - 1][this.n - 1] != 0) {
+            return false;
+        }
+
+        int lastBlock = this.n * this.n;
+        for (int i = 0; i < this.n; i++) {
+            for (int j = 0; j < this.n; j++) {
+                int expectedBlock = 3 * i + j + 1;
+                // Skip last block from check
+                if (expectedBlock == lastBlock) {
+                    continue;
+                }
+                if (this.blocks[i][j] != 0 && this.blocks[i][j] != expectedBlock) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -189,5 +207,22 @@ public class Board {
         init.equals(twin);
 
         init.hamming();
+
+        int[][] solvedBlocks = new int[3][];
+        solvedBlocks[0] = new int[3];
+        solvedBlocks[1] = new int[3];
+        solvedBlocks[2] = new int[3];
+        solvedBlocks[0][0] = 1;
+        solvedBlocks[0][1] = 2;
+        solvedBlocks[0][2] = 3;
+        solvedBlocks[1][0] = 4;
+        solvedBlocks[1][1] = 5;
+        solvedBlocks[1][2] = 6;
+        solvedBlocks[2][0] = 7;
+        solvedBlocks[2][1] = 8;
+        solvedBlocks[2][2] = 0;
+
+        Board solvedBoard = new Board(solvedBlocks);
+        solvedBoard.isGoal();
     }
 }
