@@ -13,7 +13,9 @@
 
 import edu.princeton.cs.algs4.StdRandom;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Board {
     private int[][] blocks;
@@ -125,12 +127,7 @@ public class Board {
      * A board that is obtained by exchanging any pair of blocks
      */
     public Board twin() {
-        // Deep copy of the array.
-        int[][] twin = new int[this.n][];
-        for (int i = 0; i < this.n; i++) {
-            twin[i] = new int[this.n];
-            System.arraycopy(this.blocks[i], 0, twin[i], 0, this.n);
-        }
+        int[][] copy = this.cloneBoardArray();
 
         // Get random row
         int i;
@@ -142,7 +139,7 @@ public class Board {
             // Try to find two non-zero items in the row
             for (int c = 0; c < this.n; c++) {
                 int nextColumn = c + 1;
-                if (nextColumn < this.n && twin[i][c] != 0 && twin[i][c + 1] != 0) {
+                if (nextColumn < this.n && copy[i][c] != 0 && copy[i][c + 1] != 0) {
                     j = c;
                     j2 = nextColumn;
                     break;
@@ -156,11 +153,11 @@ public class Board {
         }
 
         // Swap elements in twin array
-        int temp = twin[i][j];
-        twin[i][j] = twin[i][j2];
-        twin[i][j2] = temp;
+        int temp = copy[i][j];
+        copy[i][j] = copy[i][j2];
+        copy[i][j2] = temp;
 
-        return new Board(twin);
+        return new Board(copy);
     }
 
     /**
@@ -188,7 +185,47 @@ public class Board {
      * All neighboring boards
      */
     public Iterable<Board> neighbors() {
-        return null;
+        // Find zero-value block
+        int c = 0;
+        int r = 0;
+        mainLoop:
+        for (int i = 0; i < this.n; i++) {
+            for (int j = 0; j < this.n; j++) {
+                if (this.blocks[i][j] == 0) {
+                    r = i;
+                    c = j;
+                    break mainLoop;
+                }
+            }
+        }
+
+        List<Board> results = new ArrayList<Board>();
+
+        Board result;
+        int[][] array;
+        for (int i = -1; i < 2; i = i + 2) {
+            int nr = r + i;
+            int nc = c + i;
+            if (nr >= 0 && nr < this.n) {
+                array = this.cloneBoardArray();
+                this.swap(array, r, nr, c, c);
+                result = new Board(array);
+                results.add(result);
+            }
+            if (nc >= 0 && nc < this.n) {
+                array = this.cloneBoardArray();
+                this.swap(array, r, r, c, nc);
+                result = new Board(array);
+                results.add(result);
+            }
+        }
+
+        return results;
+    }
+
+    private void swap(int[][] array, int r, int r1, int c, int c1) {
+        array[r][c] = array[r1][c1];
+        array[r1][c1] = 0;
     }
 
     /**
@@ -206,6 +243,20 @@ public class Board {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Clone board
+     */
+    private int[][] cloneBoardArray() {
+        // Deep copy of the array.
+        int[][] copy = new int[this.n][];
+        for (int i = 0; i < this.n; i++) {
+            copy[i] = new int[this.n];
+            System.arraycopy(this.blocks[i], 0, copy[i], 0, this.n);
+        }
+
+        return copy;
     }
 
     /**
@@ -236,7 +287,7 @@ public class Board {
 
         Board twin = init.twin();
         init.equals(twin);
-
+        System.out.print(twin.toString());
         init.hamming();
 
         int[][] solvedBlocks = new int[3][];
@@ -297,5 +348,22 @@ public class Board {
 
         Board manhattanBoard2 = new Board(manhattanBlocks2);
         manhattanBoard2.manhattan();
+
+        int[][] neighborBlocks = new int[3][];
+        neighborBlocks[0] = new int[3];
+        neighborBlocks[1] = new int[3];
+        neighborBlocks[2] = new int[3];
+        neighborBlocks[0][0] = 8;
+        neighborBlocks[0][1] = 1;
+        neighborBlocks[0][2] = 3;
+        neighborBlocks[1][0] = 4;
+        neighborBlocks[1][1] = 2;
+        neighborBlocks[1][2] = 0;
+        neighborBlocks[2][0] = 7;
+        neighborBlocks[2][1] = 6;
+        neighborBlocks[2][2] = 5;
+
+        Board neighborBoard = new Board(neighborBlocks);
+        neighborBoard.neighbors();
     }
 }

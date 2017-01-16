@@ -16,6 +16,10 @@ public class Solver {
      * Find a solution to the initial board (using the A* algorithm)
      */
     public Solver(Board initial) {
+        if (initial == null) {
+            throw new java.lang.NullPointerException("Board cannot be null");
+        }
+
     }
 
     /**
