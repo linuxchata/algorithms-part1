@@ -18,6 +18,7 @@ import java.util.Arrays;
 public class Board {
     private int[][] blocks;
     private int n;
+    private int moves;
 
     /**
      * Construct a board from an n-by-n array of blocks
@@ -30,6 +31,7 @@ public class Board {
 
         this.n = blocks.length;
         this.blocks = blocks;
+        this.moves = 0;
     }
 
     /**
@@ -43,7 +45,17 @@ public class Board {
      * N umber of blocks out of place
      */
     public int hamming() {
-        return 0;
+        int hammingValue = 0;
+        for (int i = 0; i < this.n; i++) {
+            for (int j = 0; j < this.n; j++) {
+                int expectedBlock = 3 * i + j + 1;
+                if (this.blocks[i][j] != 0 && this.blocks[i][j] != expectedBlock) {
+                    hammingValue++;
+                }
+            }
+        }
+
+        return hammingValue + this.moves;
     }
 
     /**
@@ -151,13 +163,19 @@ public class Board {
      * Unit tests (not graded)
      */
     public static void main(String[] args) {
-        int[][] blocks = new int[2][];
-        blocks[0] = new int[2];
-        blocks[1] = new int[2];
-        blocks[0][0] = 1;
-        blocks[0][1] = 0;
-        blocks[1][0] = 2;
-        blocks[0][1] = 3;
+        int[][] blocks = new int[3][];
+        blocks[0] = new int[3];
+        blocks[1] = new int[3];
+        blocks[2] = new int[3];
+        blocks[0][0] = 0;
+        blocks[0][1] = 1;
+        blocks[0][2] = 3;
+        blocks[1][0] = 4;
+        blocks[1][1] = 2;
+        blocks[1][2] = 5;
+        blocks[2][0] = 7;
+        blocks[2][1] = 8;
+        blocks[2][2] = 6;
 
         Board init = new Board(blocks);
         Board init2 = new Board(blocks);
@@ -169,5 +187,7 @@ public class Board {
 
         Board twin = init.twin();
         init.equals(twin);
+
+        init.hamming();
     }
 }
