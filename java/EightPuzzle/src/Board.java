@@ -1,7 +1,7 @@
 /******************************************************************************
  *  Author:        Pylyp Lebediev
  *  Written:       15/01/2017
- *  Last updated:  16/01/2017
+ *  Last updated:  17/01/2017
  *
  *  Compilation:  javac Board.java
  *  Execution:    java Board
@@ -15,13 +15,9 @@ import edu.princeton.cs.algs4.StdRandom;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
-public class Board implements Comparator {
-    public int moves;
-    public Board previousSearchNode;
-
+public class Board {
     private int[][] blocks;
     private int n;
 
@@ -39,7 +35,6 @@ public class Board implements Comparator {
 
         this.n = blocks.length;
         this.blocks = blocks;
-        this.moves = 0;
     }
 
     /**
@@ -175,27 +170,6 @@ public class Board implements Comparator {
     }
 
     /**
-     * Comparator implementation
-     */
-    @Override
-    public int compare(Object o1, Object o2) {
-        Board b1 = (Board) o1;
-        Board b2 = (Board) o2;
-
-        int b1m = b1.manhattan() + this.moves;
-        int b2m = b2.manhattan() + this.moves;
-
-        if (b1m > b2m) {
-            return 1;
-        }
-        if (b1m < b2m) {
-            return -1;
-        }
-
-        return 0;
-    }
-
-    /**
      * Does this board equal y?
      */
     public boolean equals(Object y) {
@@ -241,14 +215,16 @@ public class Board implements Comparator {
         for (int i = -1; i < 2; i = i + 2) {
             int nr = r + i;
             int nc = c + i;
+
+            // Swap blocks only is block is not in place.
             if (nr >= 0 && nr < this.n) {
                 array = this.cloneBoardArray();
-                this.swapZeroValue(array, r, nr, c, c);
+                this.swapZeroBlock(array, r, nr, c, c);
                 results.add(new Board(array));
             }
             if (nc >= 0 && nc < this.n) {
                 array = this.cloneBoardArray();
-                this.swapZeroValue(array, r, r, c, nc);
+                this.swapZeroBlock(array, r, r, c, nc);
                 results.add(new Board(array));
             }
         }
@@ -291,7 +267,7 @@ public class Board implements Comparator {
     /**
      * Swap zero value in the blocks array
      */
-    private void swapZeroValue(int[][] array, int r0, int r, int c0, int c) {
+    private void swapZeroBlock(int[][] array, int r0, int r, int c0, int c) {
         array[r0][c0] = array[r][c];
         array[r][c] = 0;
     }
