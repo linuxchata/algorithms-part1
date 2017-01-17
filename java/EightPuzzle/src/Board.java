@@ -15,12 +15,18 @@ import edu.princeton.cs.algs4.StdRandom;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
-public class Board {
+public class Board implements Comparator {
+    public int moves;
+    public Board previousSearchNode;
+
     private int[][] blocks;
     private int n;
-    private int moves;
+
+    private int manhattan = -1;
+    private int hamming = -1;
 
     /**
      * Construct a board from an n-by-n array of blocks
@@ -47,6 +53,10 @@ public class Board {
      * N umber of blocks out of place
      */
     public int hamming() {
+        if (this.hamming != -1) {
+            return this.hamming;
+        }
+
         int hamming = 0;
         for (int i = 0; i < this.n; i++) {
             for (int j = 0; j < this.n; j++) {
@@ -57,13 +67,17 @@ public class Board {
             }
         }
 
-        return hamming + this.moves;
+        return hamming;
     }
 
     /**
      * Sum of Manhattan distances between blocks and goal
      */
     public int manhattan() {
+        if (this.manhattan != -1) {
+            return this.manhattan;
+        }
+
         int manhattan = 0;
 
         // Expected value
@@ -95,7 +109,7 @@ public class Board {
             }
         }
 
-        return manhattan + this.moves;
+        return manhattan;
     }
 
     /**
@@ -161,6 +175,27 @@ public class Board {
     }
 
     /**
+     * Comparator implementation
+     */
+    @Override
+    public int compare(Object o1, Object o2) {
+        Board b1 = (Board) o1;
+        Board b2 = (Board) o2;
+
+        int b1m = b1.manhattan() + this.moves;
+        int b2m = b2.manhattan() + this.moves;
+
+        if (b1m > b2m) {
+            return 1;
+        }
+        if (b1m < b2m) {
+            return -1;
+        }
+
+        return 0;
+    }
+
+    /**
      * Does this board equal y?
      */
     public boolean equals(Object y) {
@@ -201,31 +236,24 @@ public class Board {
 
         List<Board> results = new ArrayList<Board>();
 
-        Board result;
+        // Swap zero-value block with neighbors
         int[][] array;
         for (int i = -1; i < 2; i = i + 2) {
             int nr = r + i;
             int nc = c + i;
             if (nr >= 0 && nr < this.n) {
                 array = this.cloneBoardArray();
-                this.swap(array, r, nr, c, c);
-                result = new Board(array);
-                results.add(result);
+                this.swapZeroValue(array, r, nr, c, c);
+                results.add(new Board(array));
             }
             if (nc >= 0 && nc < this.n) {
                 array = this.cloneBoardArray();
-                this.swap(array, r, r, c, nc);
-                result = new Board(array);
-                results.add(result);
+                this.swapZeroValue(array, r, r, c, nc);
+                results.add(new Board(array));
             }
         }
 
         return results;
-    }
-
-    private void swap(int[][] array, int r, int r1, int c, int c1) {
-        array[r][c] = array[r1][c1];
-        array[r1][c1] = 0;
     }
 
     /**
@@ -245,6 +273,7 @@ public class Board {
         return sb.toString();
     }
 
+
     /**
      * Clone board
      */
@@ -257,6 +286,14 @@ public class Board {
         }
 
         return copy;
+    }
+
+    /**
+     * Swap zero value in the blocks array
+     */
+    private void swapZeroValue(int[][] array, int r0, int r, int c0, int c) {
+        array[r0][c0] = array[r][c];
+        array[r][c] = 0;
     }
 
     /**
