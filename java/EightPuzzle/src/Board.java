@@ -1,7 +1,7 @@
 /******************************************************************************
  *  Author:        Pylyp Lebediev
  *  Written:       15/01/2017
- *  Last updated:  17/01/2017
+ *  Last updated:  18/01/2017
  *
  *  Compilation:  javac Board.java
  *  Execution:    java Board
@@ -21,8 +21,8 @@ public class Board {
     private int[][] blocks;
     private int n;
 
-    private int manhattan = -1;
-    private int hamming = -1;
+    private int manhattanField = -1;
+    private int hammingField = -1;
 
     /**
      * Construct a board from an n-by-n array of blocks
@@ -34,7 +34,7 @@ public class Board {
         }
 
         this.n = blocks.length;
-        this.blocks = blocks;
+        this.blocks = this.cloneBoardArray(blocks);
     }
 
     /**
@@ -48,20 +48,21 @@ public class Board {
      * N umber of blocks out of place
      */
     public int hamming() {
-        if (this.hamming != -1) {
-            return this.hamming;
+        if (this.hammingField != -1) {
+            return this.hammingField;
         }
 
         int hamming = 0;
         for (int i = 0; i < this.n; i++) {
             for (int j = 0; j < this.n; j++) {
-                int expectedBlock = 3 * i + j + 1;
+                int expectedBlock = this.n * i + j + 1;
                 if (this.blocks[i][j] != 0 && this.blocks[i][j] != expectedBlock) {
                     hamming++;
                 }
             }
         }
 
+        this.hammingField = hamming;
         return hamming;
     }
 
@@ -69,8 +70,8 @@ public class Board {
      * Sum of Manhattan distances between blocks and goal
      */
     public int manhattan() {
-        if (this.manhattan != -1) {
-            return this.manhattan;
+        if (this.manhattanField != -1) {
+            return this.manhattanField;
         }
 
         int manhattan = 0;
@@ -104,6 +105,7 @@ public class Board {
             }
         }
 
+        this.manhattanField = manhattan;
         return manhattan;
     }
 
@@ -119,7 +121,7 @@ public class Board {
         int lastBlock = this.n * this.n;
         for (int i = 0; i < this.n; i++) {
             for (int j = 0; j < this.n; j++) {
-                int expectedBlock = 3 * i + j + 1;
+                int expectedBlock = this.n * i + j + 1;
                 // Skip last block from check
                 if (expectedBlock == lastBlock) {
                     continue;
@@ -136,7 +138,7 @@ public class Board {
      * A board that is obtained by exchanging any pair of blocks
      */
     public Board twin() {
-        int[][] copy = this.cloneBoardArray();
+        int[][] copy = this.cloneBoardArray(this.blocks);
 
         // Get random row
         int i;
@@ -218,12 +220,12 @@ public class Board {
 
             // Swap blocks only is block is not in place.
             if (nr >= 0 && nr < this.n) {
-                array = this.cloneBoardArray();
+                array = this.cloneBoardArray(this.blocks);
                 this.swapZeroBlock(array, r, nr, c, c);
                 results.add(new Board(array));
             }
             if (nc >= 0 && nc < this.n) {
-                array = this.cloneBoardArray();
+                array = this.cloneBoardArray(this.blocks);
                 this.swapZeroBlock(array, r, r, c, nc);
                 results.add(new Board(array));
             }
@@ -241,7 +243,7 @@ public class Board {
 
         for (int i = 0; i < this.blocks.length; i++) {
             for (int j = 0; j < this.blocks.length; j++) {
-                sb.append(String.format("%2d", this.blocks[i][j]));
+                sb.append(String.format("%4d", this.blocks[i][j]));
             }
             sb.append(System.lineSeparator());
         }
@@ -249,16 +251,15 @@ public class Board {
         return sb.toString();
     }
 
-
     /**
      * Clone board
      */
-    private int[][] cloneBoardArray() {
+    private int[][] cloneBoardArray(int[][] array) {
         // Deep copy of the array.
         int[][] copy = new int[this.n][];
         for (int i = 0; i < this.n; i++) {
             copy[i] = new int[this.n];
-            System.arraycopy(this.blocks[i], 0, copy[i], 0, this.n);
+            System.arraycopy(array[i], 0, copy[i], 0, this.n);
         }
 
         return copy;
@@ -276,107 +277,5 @@ public class Board {
      * Unit tests (not graded)
      */
     public static void main(String[] args) {
-        int[][] blocks = new int[3][];
-        blocks[0] = new int[3];
-        blocks[1] = new int[3];
-        blocks[2] = new int[3];
-        blocks[0][0] = 0;
-        blocks[0][1] = 1;
-        blocks[0][2] = 3;
-        blocks[1][0] = 4;
-        blocks[1][1] = 2;
-        blocks[1][2] = 5;
-        blocks[2][0] = 7;
-        blocks[2][1] = 8;
-        blocks[2][2] = 6;
-
-        Board init = new Board(blocks);
-        Board init2 = new Board(blocks);
-
-        // Test equals.
-        init.equals(init);
-
-        init.equals(init2);
-
-        Board twin = init.twin();
-        init.equals(twin);
-        System.out.print(twin.toString());
-        init.hamming();
-
-        int[][] solvedBlocks = new int[3][];
-        solvedBlocks[0] = new int[3];
-        solvedBlocks[1] = new int[3];
-        solvedBlocks[2] = new int[3];
-        solvedBlocks[0][0] = 1;
-        solvedBlocks[0][1] = 2;
-        solvedBlocks[0][2] = 3;
-        solvedBlocks[1][0] = 4;
-        solvedBlocks[1][1] = 5;
-        solvedBlocks[1][2] = 6;
-        solvedBlocks[2][0] = 7;
-        solvedBlocks[2][1] = 8;
-        solvedBlocks[2][2] = 0;
-
-        Board solvedBoard = new Board(solvedBlocks);
-        solvedBoard.isGoal();
-
-        int[][] manhattanBlocks = new int[3][];
-        manhattanBlocks[0] = new int[3];
-        manhattanBlocks[1] = new int[3];
-        manhattanBlocks[2] = new int[3];
-        manhattanBlocks[0][0] = 8;
-        manhattanBlocks[0][1] = 1;
-        manhattanBlocks[0][2] = 3;
-        manhattanBlocks[1][0] = 4;
-        manhattanBlocks[1][1] = 0;
-        manhattanBlocks[1][2] = 2;
-        manhattanBlocks[2][0] = 7;
-        manhattanBlocks[2][1] = 6;
-        manhattanBlocks[2][2] = 5;
-
-        Board manhattanBoard = new Board(manhattanBlocks);
-        manhattanBoard.manhattan();
-
-        int[][] manhattanBlocks2 = new int[4][];
-        manhattanBlocks2[0] = new int[4];
-        manhattanBlocks2[1] = new int[4];
-        manhattanBlocks2[2] = new int[4];
-        manhattanBlocks2[3] = new int[4];
-        manhattanBlocks2[0][0] = 0;
-        manhattanBlocks2[0][1] = 9;
-        manhattanBlocks2[0][2] = 1;
-        manhattanBlocks2[0][3] = 10;
-        manhattanBlocks2[1][0] = 3;
-        manhattanBlocks2[1][1] = 5;
-        manhattanBlocks2[1][2] = 4;
-        manhattanBlocks2[1][3] = 2;
-        manhattanBlocks2[2][0] = 14;
-        manhattanBlocks2[2][1] = 6;
-        manhattanBlocks2[2][2] = 11;
-        manhattanBlocks2[2][3] = 7;
-        manhattanBlocks2[3][0] = 12;
-        manhattanBlocks2[3][1] = 13;
-        manhattanBlocks2[3][2] = 8;
-        manhattanBlocks2[3][3] = 15;
-
-        Board manhattanBoard2 = new Board(manhattanBlocks2);
-        manhattanBoard2.manhattan();
-
-        int[][] neighborBlocks = new int[3][];
-        neighborBlocks[0] = new int[3];
-        neighborBlocks[1] = new int[3];
-        neighborBlocks[2] = new int[3];
-        neighborBlocks[0][0] = 8;
-        neighborBlocks[0][1] = 1;
-        neighborBlocks[0][2] = 3;
-        neighborBlocks[1][0] = 4;
-        neighborBlocks[1][1] = 2;
-        neighborBlocks[1][2] = 0;
-        neighborBlocks[2][0] = 7;
-        neighborBlocks[2][1] = 6;
-        neighborBlocks[2][2] = 5;
-
-        Board neighborBoard = new Board(neighborBlocks);
-        neighborBoard.neighbors();
     }
 }

@@ -1,7 +1,7 @@
 /******************************************************************************
  *  Author:        Pylyp Lebediev
  *  Written:       15/01/2017
- *  Last updated:  17/01/2017
+ *  Last updated:  18/01/2017
  *
  *  Compilation:  javac Solver.java
  *  Execution:    java Solver
@@ -13,12 +13,12 @@
 
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.StdOut;
 
 import java.util.Comparator;
 
 public class Solver {
     private SearchNode goalSearchNode;
-    private int moves = 0;
 
     /**
      * Find a solution to the initial board (using the A* algorithm)
@@ -42,13 +42,17 @@ public class Solver {
      * Min number of moves to solve initial board; -1 if unsolvable
      */
     public int moves() {
-        return this.isSolvable() ? this.moves : -1;
+        return this.isSolvable() ? this.countMoves(this.goalSearchNode) : -1;
     }
 
     /**
      * Sequence of boards in a shortest solution; null if unsolvable
      */
     public Iterable<Board> solution() {
+        if (this.goalSearchNode == null) {
+            return null;
+        }
+
         Stack<Board> result = new Stack<Board>();
 
         SearchNode current = this.goalSearchNode;
@@ -63,38 +67,69 @@ public class Solver {
     }
 
     /**
-     * Solve board.
+     * Solve board
      */
     private void solve(Board initial) {
-        SearchNode initialSearchNode = new SearchNode(initial, null, this.moves);
+        SearchNode initialSearchNode = new SearchNode(initial, null);
+        SearchNode initialSearchNodeTwin = new SearchNode(initial.twin(), null);
 
         MinPQ<SearchNode> openSet = new MinPQ<SearchNode>(initialSearchNode);
         openSet.insert(initialSearchNode);
 
-        while (!openSet.isEmpty()) {
-            SearchNode currentSearchNode = openSet.delMin();
-            Board current = currentSearchNode.board();
+        MinPQ<SearchNode> openSetTwin = new MinPQ<SearchNode>(initialSearchNodeTwin);
+        openSetTwin.insert(initialSearchNodeTwin);
 
-            if (current.isGoal()) {
-                this.goalSearchNode = currentSearchNode;
+        while (!openSet.isEmpty() || !openSetTwin.isEmpty()) {
+            if (this.iteration(openSet)) {
                 break;
             }
 
-            this.moves++;
-
-            Iterable<Board> neighbors = current.neighbors();
-            for (Board board : neighbors) {
-                if (currentSearchNode.previousNode() == null || !currentSearchNode.previousBoard().equals(board)) {
-                    openSet.insert(new SearchNode(board, currentSearchNode, this.moves));
-                }
+            if (this.iteration(openSetTwin)) {
+                this.goalSearchNode = null;
+                break;
             }
         }
+    }
+
+    private boolean iteration(MinPQ<SearchNode> openSet) {
+        SearchNode currentSearchNode = openSet.delMin();
+        Board current = currentSearchNode.board();
+
+        if (current.isGoal()) {
+            this.goalSearchNode = currentSearchNode;
+            return true;
+        }
+
+        Iterable<Board> neighbors = current.neighbors();
+        for (Board board : neighbors) {
+            if (currentSearchNode.previousNode() == null || !currentSearchNode.previousBoard().equals(board)) {
+                openSet.insert(new SearchNode(board, currentSearchNode));
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Numbers of moves
+     */
+    private int countMoves(SearchNode node) {
+        if (node == null) {
+            return 0;
+        }
+
+        int moves = 0;
+        SearchNode current = node;
+        while (current.previousNode() != null) {
+            current = current.previousNode();
+            moves++;
+        }
+        return moves;
     }
 
     /**
      * Represents search node
      */
-    private class SearchNode implements Comparator {
+    private class SearchNode implements Comparator<SearchNode> {
         private Board board;
         private SearchNode previousNode;
         private int moves;
@@ -102,10 +137,10 @@ public class Solver {
         /**
          * Construct search node
          */
-        public SearchNode(Board board, SearchNode previousNode, int moves) {
+        public SearchNode(Board board, SearchNode previousNode) {
             this.board = board;
             this.previousNode = previousNode;
-            this.moves = moves;
+            this.moves = Solver.this.countMoves(previousNode);
         }
 
         /**
@@ -133,12 +168,12 @@ public class Solver {
          * Comparator implementation
          */
         @Override
-        public int compare(Object o1, Object o2) {
-            Board b1 = ((SearchNode) o1).board();
-            Board b2 = ((SearchNode) o2).board();
+        public int compare(SearchNode o1, SearchNode o2) {
+            Board b1 = (o1).board();
+            Board b2 = (o2).board();
 
-            int b1m = b1.manhattan() + this.moves;
-            int b2m = b2.manhattan() + this.moves;
+            int b1m = b1.manhattan() + o1.moves;
+            int b2m = b2.manhattan() + o2.moves;
 
             if (b1m > b2m) {
                 return 1;
