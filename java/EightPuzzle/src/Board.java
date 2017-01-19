@@ -239,13 +239,13 @@ public class Board {
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(this.n + System.lineSeparator());
+        sb.append(this.n + "\n");
 
-        for (int i = 0; i < this.blocks.length; i++) {
-            for (int j = 0; j < this.blocks.length; j++) {
+        for (int i = 0; i < this.n; i++) {
+            for (int j = 0; j < this.n; j++) {
                 sb.append(String.format("%4d", this.blocks[i][j]));
             }
-            sb.append(System.lineSeparator());
+            sb.append("\n");
         }
 
         return sb.toString();
