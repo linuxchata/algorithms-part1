@@ -72,6 +72,21 @@ public class KdTree {
         return new Point2D(0, 0);
     }
 
+    private static class Node {
+
+        // The point
+        private Point2D p;
+
+        // The axis-aligned rectangle corresponding to this node
+        private RectHV rect;
+
+        // The left/bottom subtree
+        private Node left;
+
+        // The right/top subtree
+        private Node right;
+    }
+
     // Unit testing of the methods (optional)
     public static void main(String[] args) {
     }
