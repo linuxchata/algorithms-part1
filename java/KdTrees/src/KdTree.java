@@ -109,17 +109,19 @@ public class KdTree {
         }
 
         Node currentNode = this.root;
-        boolean isHorizontal = true;
+        boolean isVertical = true;
         while (currentNode != null) {
-            int c = this.compareCoordinates(currentNode.p, p, isHorizontal);
-            if (c > 0) {
-                currentNode = currentNode.left;
-            } else if (c < 0) {
-                currentNode = currentNode.right;
-            } else {
+            if (currentNode.p.equals(p)) {
                 return true;
             }
-            isHorizontal = !isHorizontal;
+            int c = this.compareCoordinates(currentNode.p, p, isVertical);
+            if (c > 0) {
+                currentNode = currentNode.left;
+            } else {
+                currentNode = currentNode.right;
+            }
+
+            isVertical = !isVertical;
         }
 
         return false;
