@@ -1,13 +1,13 @@
 /******************************************************************************
  *  Author:        Pylyp Lebediev
  *  Written:       20/01/2017
- *  Last updated:  23/01/2017
+ *  Last updated:  24/01/2017
  *
  *  Compilation:  javac PointSET.java
  *  Execution:    java PointSET
- *  Dependencies: Point2D
+ *  Dependencies: Point2D, RectHV
  *
- *  Point data type
+ *  Point set data type
  *
  ******************************************************************************/
 
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 public class PointSET {
+
     private TreeSet<Point2D> tree;
 
     // Construct an empty set of points
@@ -65,7 +66,7 @@ public class PointSET {
     // All points that are inside the rectangle
     public Iterable<Point2D> range(RectHV rect) {
         if (rect == null) {
-            throw new NullPointerException("RectHV cannot be null");
+            throw new NullPointerException("Rect cannot be null");
         }
 
         List<Point2D> result = new ArrayList<Point2D>();
@@ -92,7 +93,6 @@ public class PointSET {
                 minDistance = distance;
                 nearestPoint = point;
             }
-
         }
 
         return nearestPoint;
