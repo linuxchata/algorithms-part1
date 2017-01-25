@@ -153,6 +153,9 @@ public class KdTree {
         }
 
         List<Point2D> result = new ArrayList<Point2D>();
+
+        this.search(this.root, true, rect, result);
+
         return result;
     }
 
@@ -161,6 +164,8 @@ public class KdTree {
         if (p == null) {
             throw new NullPointerException("Point cannot be null");
         }
+
+        double minDistance = this.root.p.distanceTo(p);
 
         return new Point2D(0, 0);
     }
@@ -179,6 +184,45 @@ public class KdTree {
             return -1;
         } else {
             return 0;
+        }
+    }
+
+    // All points that are inside the rectangle
+    private void search(Node node, boolean isVertical, RectHV rect, List<Point2D> result) {
+        if (node == null) {
+            return;
+        }
+
+        // Check if point in node lies in given rectangle.
+        if (rect.contains(node.p)) {
+            result.add(node.p);
+        }
+
+        if (rect.intersects(node.rect)) {
+            // Recursively search left/bottom (if any could fall in rectangle).
+            search(node.left, !isVertical, rect, result);
+
+            // Recursively search right/top (if any could fall in rectangle).
+            search(node.right, !isVertical, rect, result);
+            return;
+        }
+
+        if (isVertical) {
+            if (rect.xmax() < node.p.x()) {
+                // Range of the left side
+                search(node.left, !isVertical, rect, result);
+            } else if (rect.xmin() > node.p.x()) {
+                // Range of the right side
+                search(node.right, !isVertical, rect, result);
+            }
+        } else {
+            if (rect.ymax() < node.p.y()) {
+                // Range of the bottom side
+                search(node.left, !isVertical, rect, result);
+            } else if (rect.ymin() > node.p.y()) {
+                // Range of the top side
+                search(node.right, !isVertical, rect, result);
+            }
         }
     }
 
