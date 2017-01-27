@@ -188,7 +188,7 @@ public class KdTree {
                 searchNearest(node.left, nearestNode, point, !isVertical);
 
                 if (node.right != null) {
-                    double d = Math.abs(node.right.p.x() - point.x());
+                    double d = node.right.rect.distanceTo(point);
                     if (nearestNodeDistanceToQueryPoint > d) {
                         searchNearest(node.right, nearestNode, point, !isVertical);
                     }
@@ -198,7 +198,7 @@ public class KdTree {
                 searchNearest(node.right, nearestNode, point, !isVertical);
 
                 if (node.left != null) {
-                    double d = Math.abs(node.left.p.x() - point.x());
+                    double d = node.left.rect.distanceTo(point);
                     if (nearestNodeDistanceToQueryPoint > d) {
                         searchNearest(node.left, nearestNode, point, !isVertical);
                     }
@@ -210,7 +210,7 @@ public class KdTree {
                 searchNearest(node.left, nearestNode, point, !isVertical);
 
                 if (node.right != null) {
-                    double d = Math.abs(node.right.p.y() - point.y());
+                    double d = node.right.rect.distanceTo(point);
                     if (nearestNodeDistanceToQueryPoint > d) {
                         searchNearest(node.right, nearestNode, point, !isVertical);
                     }
@@ -220,7 +220,7 @@ public class KdTree {
                 searchNearest(node.right, nearestNode, point, !isVertical);
 
                 if (node.left != null) {
-                    double d = Math.abs(node.left.p.y() - point.y());
+                    double d = node.left.rect.distanceTo(point);
                     if (nearestNodeDistanceToQueryPoint > d) {
                         searchNearest(node.left, nearestNode, point, !isVertical);
                     }
@@ -355,7 +355,7 @@ public class KdTree {
 
         KdTree set5 = new KdTree();
         set5.insert(new Point2D(0.0, 1.0));
-        StdOut.println(set5.nearest(new Point2D(1.0, 1.0))); // (0.0, 1.0
+        StdOut.println(set5.nearest(new Point2D(1.0, 1.0))); // 0.0, 1.0
         set5.insert(new Point2D(0.0, 1.0));
         set5.insert(new Point2D(0.0, 0.0));
         set5.insert(new Point2D(1.0, 1.0));
