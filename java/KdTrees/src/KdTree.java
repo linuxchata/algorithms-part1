@@ -1,31 +1,30 @@
 /******************************************************************************
  *  Author:        Pylyp Lebediev
  *  Written:       20/01/2017
- *  Last updated:  27/01/2017
+ *  Last updated:  28/01/2017
  *
  *  Compilation:  javac KdTree.java
  *  Execution:    java KdTree
  *  Dependencies: Point2D, RectHV
  *
- *  KD tree data type
+ *  Kd tree data type
  *
  ******************************************************************************/
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class KdTree {
 
+    // List of the points in the Kd tree (flatten)
     private List<Node> points;
 
+    // Root node of the Kd tree
     private Node root;
-
-    private int size;
 
     // Construct an empty set of points
     public KdTree() {
@@ -39,7 +38,7 @@ public class KdTree {
 
     // Number of points in the set
     public int size() {
-        return this.size;
+        return this.points.size();
     }
 
     // Add the point to the set (if it is not already in the set)
@@ -56,31 +55,32 @@ public class KdTree {
         if (node == null) {
             RectHV rect;
             if (isVertical) {
-                int ymin = 0;
-                int ymax = 1;
+                double ymin = 0.0;
+                double ymax = 1.0;
                 if (parentNode == null) {
                     rect = new RectHV(point.x(), ymin, point.x(), ymax);
                 } else {
                     int c = this.compareCoordinates(parentNode.p.y(), point.y());
                     if (c > 0) {
+                        ymin = this.calculateYMin(parentNode, ymin);
                         rect = new RectHV(point.x(), ymin, point.x(), parentNode.p.y());
                     } else {
+                        ymax = this.calculateYMax(parentNode, ymax);
                         rect = new RectHV(point.x(), parentNode.p.y(), point.x(), ymax);
                     }
                 }
             } else {
                 int c = this.compareCoordinates(parentNode.p.x(), point.x());
                 if (c > 0) {
-                    int xmin = 0;
+                    double xmin = calculateXMin(parentNode);
                     rect = new RectHV(xmin, point.y(), parentNode.p.x(), point.y());
                 } else {
-                    int xmax = 1;
+                    double xmax = calculateXMax(parentNode);
                     rect = new RectHV(parentNode.p.x(), point.y(), xmax, point.y());
                 }
             }
-            Node newNode = new Node(point, rect, isVertical);
+            Node newNode = new Node(parentNode, point, rect, isVertical);
             points.add(newNode);
-            this.size++;
             return newNode;
         }
 
@@ -96,6 +96,10 @@ public class KdTree {
         }
 
         return node;
+    }
+
+    private boolean hasGrandGrandParent(Node parentNode) {
+        return parentNode.parentNode != null && parentNode.parentNode.parentNode != null;
     }
 
     // Does the set contain point p?
@@ -185,69 +189,20 @@ public class KdTree {
         if (isVertical) {
             if (point.x() < node.p.x()) {
                 // Search on the left side first
-                searchNearest(node.left, nearestNode, point, !isVertical);
+                this.leftBottomSearch(node, nearestNode, nearestNodeDistanceToQueryPoint, point, isVertical, true);
 
-                if (node.right != null) {
-                    double d = node.right.rect.distanceTo(point);
-                    if (nearestNodeDistanceToQueryPoint > d) {
-                        searchNearest(node.right, nearestNode, point, !isVertical);
-                    }
-                }
             } else {
                 // Search on the right side first
-                searchNearest(node.right, nearestNode, point, !isVertical);
-
-                if (node.left != null) {
-                    double d = node.left.rect.distanceTo(point);
-                    if (nearestNodeDistanceToQueryPoint > d) {
-                        searchNearest(node.left, nearestNode, point, !isVertical);
-                    }
-                }
+                this.rightTopSearch(node, nearestNode, nearestNodeDistanceToQueryPoint, point, isVertical, true);
             }
         } else {
             if (point.y() < node.p.y()) {
                 // Search on the bottom side first
-                searchNearest(node.left, nearestNode, point, !isVertical);
-
-                if (node.right != null) {
-                    double d = node.right.rect.distanceTo(point);
-                    if (nearestNodeDistanceToQueryPoint > d) {
-                        searchNearest(node.right, nearestNode, point, !isVertical);
-                    }
-                }
+                this.leftBottomSearch(node, nearestNode, nearestNodeDistanceToQueryPoint, point, isVertical, false);
             } else {
                 // Search on the top side first
-                searchNearest(node.right, nearestNode, point, !isVertical);
-
-                if (node.left != null) {
-                    double d = node.left.rect.distanceTo(point);
-                    if (nearestNodeDistanceToQueryPoint > d) {
-                        searchNearest(node.left, nearestNode, point, !isVertical);
-                    }
-                }
+                this.rightTopSearch(node, nearestNode, nearestNodeDistanceToQueryPoint, point, isVertical, false);
             }
-        }
-    }
-
-    // Calculate distance from node point to query point
-    private double distance(Node node, Point2D point) {
-        return node.p.distanceTo(point);
-    }
-
-    // Get orientation
-    private int compareCoordinates(Point2D p1, Point2D p2, boolean isVertical) {
-        return isVertical ? this.compareCoordinates(p1.x(), p2.x()) :
-                this.compareCoordinates(p1.y(), p2.y());
-    }
-
-    // Compare coordinates
-    private int compareCoordinates(double c1, double c2) {
-        if (c1 > c2) {
-            return 1;
-        } else if (c1 < c2) {
-            return -1;
-        } else {
-            return 0;
         }
     }
 
@@ -290,7 +245,125 @@ public class KdTree {
         }
     }
 
+    // Left or bottom search
+    private void leftBottomSearch(
+            Node node,
+            NodeRef nearestNode,
+            double nearestNodeDistanceToQueryPoint,
+            Point2D point,
+            boolean isVertical,
+            boolean isLeft) {
+        // Search on the left or bottom side first
+        searchNearest(node.left, nearestNode, point, !isVertical);
+
+        if (node.right != null) {
+            double d = node.rect.distanceTo(point);
+            // As well handle corner case when points are on the same line.
+            if (nearestNodeDistanceToQueryPoint > d || (isLeft ? Double.compare(node.p.x(), node.right.p.x()) == 0 :
+                    Double.compare(node.p.y(), node.right.p.y()) == 0)) {
+                searchNearest(node.right, nearestNode, point, !isVertical);
+            }
+        }
+    }
+
+    // Right or top search
+    private void rightTopSearch(
+            Node node,
+            NodeRef nearestNode,
+            double nearestNodeDistanceToQueryPoint,
+            Point2D point,
+            boolean isVertical,
+            boolean isRight) {
+        // Search on the right or top side first
+        searchNearest(node.right, nearestNode, point, !isVertical);
+
+        if (node.left != null) {
+            double d = node.rect.distanceTo(point);
+            // As well handle corner case when points are on the same line.
+            if (nearestNodeDistanceToQueryPoint > d || (isRight ? Double.compare(node.p.x(), node.left.p.x()) == 0 :
+                    Double.compare(node.p.y(), node.left.p.y()) == 0)) {
+                searchNearest(node.left, nearestNode, point, !isVertical);
+            }
+        }
+    }
+
+    // Calculate distance from node point to query point
+    private double distance(Node node, Point2D point) {
+        return node.p.distanceTo(point);
+    }
+
+    // Compare coordinates of the points based on the orientation
+    private int compareCoordinates(Point2D p1, Point2D p2, boolean isVertical) {
+        return isVertical ? this.compareCoordinates(p1.x(), p2.x()) :
+                this.compareCoordinates(p1.y(), p2.y());
+    }
+
+    // Compare coordinates
+    private int compareCoordinates(double c1, double c2) {
+        if (c1 > c2) {
+            return 1;
+        } else if (c1 < c2) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
+    // Calculate x min
+    private double calculateXMin(Node parentNode) {
+        double x = 0.0;
+        if (this.hasGrandGrandParent(parentNode)) {
+            double px = parentNode.parentNode.parentNode.p.x();
+            if (px > x && px < parentNode.p.x()) {
+                x = px;
+            }
+        }
+
+        return x;
+    }
+
+    // Calculate x max
+    private double calculateXMax(Node parentNode) {
+        double x = 1.0;
+        if (this.hasGrandGrandParent(parentNode)) {
+            double px = parentNode.parentNode.parentNode.p.x();
+            if (px < x && px > parentNode.p.x()) {
+                x = px;
+            }
+        }
+
+        return x;
+    }
+
+    // Calculate y min
+    private double calculateYMin(Node parentNode, double ymin) {
+        if (this.hasGrandGrandParent(parentNode)) {
+            double py = parentNode.parentNode.parentNode.p.y();
+            if (py > ymin && py < parentNode.p.y()) {
+                ymin = py;
+            }
+        }
+
+        return ymin;
+    }
+
+    // Calculate y max
+    private double calculateYMax(Node parentNode, double ymax) {
+        if (this.hasGrandGrandParent(parentNode)) {
+            double py = parentNode.parentNode.parentNode.p.y();
+            if (py < ymax && py > parentNode.p.y()) {
+                ymax = py;
+            }
+        }
+
+        return ymax;
+    }
+
+    // Represents Kd tree node
     private static class Node {
+
+        // Parent node
+        private Node parentNode;
 
         // The point
         private Point2D p;
@@ -304,9 +377,12 @@ public class KdTree {
         // The right/top subtree
         private Node right;
 
+        // Orientation of the node
         private boolean isVertical;
 
-        private Node(Point2D p, RectHV rect, boolean isVertical) {
+        // Construct node
+        private Node(Node parentNode, Point2D p, RectHV rect, boolean isVertical) {
+            this.parentNode = parentNode;
             this.p = p;
             this.rect = rect;
             this.isVertical = isVertical;
@@ -317,17 +393,23 @@ public class KdTree {
         }
     }
 
+    // Represents node reference (to pass Node as ref param to methods.)
     private class NodeRef {
+
+        // The node
         private Node internalNode;
 
+        // Construct node reference
         private NodeRef(Node node) {
             this.internalNode = node;
         }
 
+        // Get node
         private Node get() {
             return this.internalNode;
         }
 
+        // Set node
         private void set(Node node) {
             this.internalNode = node;
         }
@@ -335,6 +417,7 @@ public class KdTree {
 
     // Unit testing of the methods (optional)
     public static void main(String[] args) {
+        /*
         KdTree set = new KdTree();
         set.insert(new Point2D(0.70208, 0.94946));
         set.insert(new Point2D(0.78219, 0.66849));
@@ -387,5 +470,11 @@ public class KdTree {
         set8.insert(new Point2D(0.41, 0.74));
         set8.insert(new Point2D(0.4, 0.66));
         StdOut.println(set8.nearest(new Point2D(0.92, 0.66)));  // 0.97, 0.9
+
+        KdTree set9 = new KdTree();
+        set9.insert(new Point2D(0.702, 0.799));
+        set9.insert(new Point2D(0.537, 0.807));
+        set9.insert(new Point2D(0.245, 0.41));
+        StdOut.println(set9.nearest(new Point2D(0.838, 0.174)));  // 0.245, 0.41 */
     }
 }
