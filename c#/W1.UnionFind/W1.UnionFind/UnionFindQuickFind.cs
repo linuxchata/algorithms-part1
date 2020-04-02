@@ -2,7 +2,7 @@
 {
     public class UnionFindQuickFind
     {
-        private int[] array;
+        private readonly int[] array;
 
         private readonly int size;
 

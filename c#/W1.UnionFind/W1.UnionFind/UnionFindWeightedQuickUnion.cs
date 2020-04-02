@@ -2,8 +2,9 @@
 {
     public class UnionFindWeightedQuickUnion
     {
-        private int[] array;
-        private int[] sizes;
+        private readonly int[] array;
+
+        private readonly int[] sizes;
 
         private readonly int size;
 
